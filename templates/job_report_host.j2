@@ -14,28 +14,30 @@
 
       <p><strong>Host info:</strong></p>
       <ul>
-        <li>OS: {{ hostvars[thehost]['ansible_distribution'] | default('N/A') }} {{ hostvars[thehost]['ansible_distribution_version'] | default('N/A') }}, Kernel: {{ hostvars[thehost]['ansible_kernel'] | default('N/A') }}
+        <li>OS: {{ hostvars[thehost]['ansible_distribution'] | default('N/A') }} {{ hostvars[thehost]['ansible_distribution_version'] | default('N/A') }}
         <li>IP addresses: {{ hostvars[thehost]['ansible_all_ipv4_addresses'] | d(['unknown']) | join(', ') }}</li>
+        <li>CPU: {{ hostvars[thehost]['ansible_processor_vcpus'] | d(['N/A']) }}</li>
+        <li>RAM: {{ hostvars[thehost]['ansible_memtotal_mb'] | d(['N/A']) }} MB</li>
+        <li>TYPE: {{ ( hostvars[thehost]['ansible_virtualization_role'] == 'host' ) | ternary ('Physical','Virtual', 'N/A') }}</li>
       </ul>
 
       <p>Job Status: <strong>{% if hostvars[thehost]['job_success']|bool %}Success{% else %}Failed{% endif %}</strong></p>
 
       <!-- We don't indent anything between 'pre' tags , because the space will be taken literally -->
-      <p><strong>Command 1 output:</strong></p>
+      <p><strong>Enabled Repos:</strong></p>
       <div class="code">
         <pre>
-{{ hostvars[thehost]['cmd1_results']['stdout'] | default('no output') | trim }}
+{{ hostvars[thehost]['enabled_repos']['stdout'] | default('no output') | trim }}
         </pre>
       </div>
 
-      {% if hostvars[thehost]['cmd1_results']['stderr_lines'] | d([]) | length > 0 %}
+      {% if hostvars[thehost]['enabled_repos']['stderr_lines'] | d([]) | length > 0 %}
         <!-- This code snippet will only appear if our command task had any lines printed to stderr -->
         <p><strong>Command 1 errors:</strong></p>
         <div class="code">
           <pre>
-{{ hostvars[thehost]['cmd1_results']['stderr'] | default('no output') | trim }}
+{{ hostvars[thehost]['enabled_repos']['stderr'] | default('no output') | trim }}
           </pre>
         </div>
       {% endif %}
-
     {% endif %}
